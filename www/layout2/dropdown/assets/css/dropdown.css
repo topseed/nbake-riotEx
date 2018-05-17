@@ -1,0 +1,18 @@
+@media only screen and (max-width: 767px) {
+	.ui.search.dropdown .menu {
+		max-height: 20rem !important; 
+	}
+}
+
+.ui.selection.active.dropdown .menu {
+	border-color: white;
+	-webkit-box-shadow: none;
+	box-shadow: none;
+}
+
+.ui.dropdown .menu {
+	position: relative !important; 
+	margin-left: -6px !important;
+	margin-bottom: -8px !important;
+	width: calc(100% + 2.6em) !important;
+}

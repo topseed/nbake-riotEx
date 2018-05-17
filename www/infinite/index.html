@@ -1,0 +1,117 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"><link rel="shortcut icon" type="image/x-icon" href="/assets/favicon.ico"><title>wordpug blog</title><style>html { opacity: 0; background-position:-9999px;}
+</style><script>let _start=Date.now()</script></head><body class="bg"><script src="//cdn.jsdelivr.net/npm/loadjs@3.5.4/dist/loadjs.min.js"></script><script src="/assets/js/setup.js"></script><div class="top"><div class="ui container"><div class="ui computer only doubling grid" style="height:9em"><div class="middle aligned five wide column"><a class="large" href="https://blog.nbake.org" style="color:white;">Visit nbake.org</a></div><div class="middle aligned center aligned six wide column"><a href="/home/"><h3><img class="ui middle aligned tiny image" src="/assets/img/pawW.svg"><img class="ui middle aligned small image" src="/assets/img/wordpugW.svg"><span style="color:#C4DC0A;">&nbsp;blog</span></h3></a></div><div class="middle aligned right aligned five wide column"><div class="ui inverted button">Subscribe</div></div></div><div class="ui tablet only doubling grid" style="height:9em"><div class="middle aligned eight wide column"><a href="/home/"><h3><img class="ui middle aligned tiny image" src="/assets/img/pawW.svg"><img class="ui middle aligned small image" src="/assets/img/wordpugW.svg"><span style="color:#C4DC0A;">&nbsp;blog</span></h3></a></div><div class="middle aligned right aligned eight wide column"><div class="ui large inverted button">Subscribe</div></div></div><div class="ui mobile only doubling grid" style="height:9em"><div class="middle aligned thirteen wide column"><a href="/home/"><h3><img class="ui middle aligned tiny image" src="/assets/img/pawW.svg"><img class="ui middle aligned small image" src="/assets/img/wordpugW.svg"><span style="color:#C4DC0A;">&nbsp;blog</span></h3></a></div><div class="middle aligned right aligned three wide column"><div class="ui large inverted icon button" data-tooltip="Subscribe" data-position="bottom right"><i class="tag icon"></i></div></div></div></div></div><div class="pusher"><div class="ui container"><div class="doubling stackable equal width six column center aligned middle aligned ui grid container" id="menu"><div class="column"><a class="ui tiny secondary inverted button" href="#">All Articles</a></div><div class="column"><a class="ui tiny secondary inverted button" href="#management">For Managers</a></div><div class="column"><a class="ui tiny secondary inverted button" href="#design">For Designers</a></div><div class="column"><a class="ui tiny secondary inverted button" href="#development">For Developers</a></div><div class="column"><a class="ui tiny secondary inverted button" href="#pug">About Pug</a></div><div class="column"><a class="ui tiny secondary inverted button" href="#trinity">HTML/CSS/&#8203;JavaScript</a></div></div></div><div class="ui container">&nbsp;</div><div class="ui container"><div class="ui segments"><div class="ui segment"><p></p><div class="ui three column stackable grid" id="cards"></div></div></div></div><script>var feed
+var i, len, batchSize = 10
+var $cards
+var filteredItems = []
+var lastItemIsVisible;
+window.onhashchange = function(event) { //menu links change hash
+	var tag = location.href.split('#')[1]; //hash value or null
+	render(tag)
+}
+function showMore(){ //infinite scroll
+	$('.lastItem').removeClass('lastItem');
+	var maxPos = Math.min(len, i+batchSize)-1
+	for (i; i <= maxPos; i++ )
+	{
+		var c = document.createElement('div')
+		filteredItems[i].prefix = feed.prefix //included in items.json from meta.yaml
+		//itemDBind is function in /blog/item_d.js, great Pug dynamic binding feature
+		c.innerHTML = itemDBind(filteredItems[i])
+		var el = c.firstChild //only using div to convert string to DOM
+		if (i == maxPos && i < len) //add class .last to last item of batch
+			el.classList.add('lastItem');
+		$cards.appendChild(el)
+	}
+	$(window).off('resize scroll') //remove any old handlers
+	if (i <= len) //only do it when list is incomplete
+	{
+		var lastItem = $('.lastItem')
+		if (lastItem.length) //we found one
+		{
+			lastItemIsVisible = isInViewport(lastItem)
+			if (lastItemIsVisible)
+				loadMore() // already visible, maybe huge screen, load more
+			else
+			{
+				var handler = onVisibilityChange(lastItem, function() {
+					showMore()
+				})
+				$(window).on('resize scroll', handler);
+
+			}
+		}
+	}
+}
+function render(tag){
+	var data = Object.assign({}, feed) //work on copy
+	//simulate a long list (6 items x 32 = 192 items)
+	data.items = data.items.concat(data.items)
+	data.items = data.items.concat(data.items)
+	data.items = data.items.concat(data.items)
+	data.items = data.items.concat(data.items)
+	data.items = data.items.concat(data.items)
+	filteredItems = data.items
+	if (tag) {
+		filteredItems = data.items.filter(function(item){
+			if (!item.tags) return false;
+			return (item.tags.filter(function(t){ return tag.split(',').indexOf(t) > -1 })).length > 0 //support comma-delimited multiple
+		})
+	}
+	i = 0
+	len = filteredItems.length
+	$cards = $('#cards').empty()[0] //clear any cards from previous search/selection and return DOM node
+	showMore() //show a few
+}
+loadjs.ready(['core'], function () {// load data
+	fetch('/blog/items.json').then(function(resp) {
+		return resp.json()
+	}).then(function(json) {
+		feed = json
+		loadjs.ready(['dbind-infinite','site'], function() {
+			var tag = location.href.split('#')[1];
+			render(tag) //first time, or after nav
+		})
+	})
+})
+loadjs.ready('core', function() {
+	if (!loadjs.isDefined('dbind-infinite')) //need this for tsrouter.js
+	{
+		loadjs([
+			'/infinite/item_d.js'
+		],'dbind-infinite', {async: false})
+	}
+	else
+		loadjs.done('dbind-infinite')
+})
+
+function isInViewport(el) {
+	if (!el.length) return false;
+	var elementTop = el.offset().top;
+	var viewportBottom = $(window).scrollTop() + $(window).height();
+	return elementTop < viewportBottom;
+}
+
+function onVisibilityChange(el, callback) {
+	return function () {
+		var newVisible = isInViewport(el);
+
+		if (newVisible != lastItemIsVisible) {
+			lastItemIsVisible = newVisible;
+			if (typeof callback == 'function') {
+				callback();
+			}
+		}
+	}
+}</script></div><div class="ui inverted vertical footer segment"><div class="ui container">Footer here</div></div><link rel="stylesheet" href="//cdn.jsdelivr.net/npm/semantic-ui@2.3.1/dist/semantic.min.css" onload="cssLoaded()"><script>console.log('layout')
+
+loadjs.ready('style', function() {
+	$('.bg').css('background-position','center')
+		
+	setTimeout(function(){
+		document.getElementsByTagName('html')[0].style.opacity = 1
+		console.log(Date.now()-_start)//time to show 
+	},1000/15)// 2 frames at 30fps
+	
+	//$('.ui.sidebar').sidebar('attach events', '.toc.item')
+
+})//ready</script><!- nB v2.05.15 --></body></html>

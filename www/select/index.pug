@@ -1,0 +1,52 @@
+extends /layout2/_layout
+
+block head
+	title #{title}
+
+block main
+	include /layout2/dropdown/_menu
+	.ui.container
+		.ui.segments
+			.ui.segment
+				p
+				#cards.ui.three.column.stackable.grid
+
+	script.
+		var feed
+		window.onhashchange = function(event) {
+			var tag = location.href.split('#')[1]; //hash or null
+			console.log('onhashchange called with tag'+tag)
+			render(tag)
+		}
+		function render(tag){
+			var data = Object.assign({}, feed) //work on copy
+			if (tag) {
+				data.items = data.items.filter(function(item){
+					if (!item.tags) return false;
+					return (item.tags.filter(function(t){ return tag.split(',').indexOf(t) > -1 })).length > 0
+				})
+			}
+			$('#cards').html(itemsDBind(data));
+			//itemsDBind is function in /blog/items_d.js, great Pug dynamic binding feature
+		}
+		loadjs.ready(['core'], function () {// load data
+			fetch('/blog/items.json').then(function(resp) {
+				return resp.json()
+			}).then(function(json) {
+				feed = json
+				loadjs.ready(['dbind-select','site'], function() {
+					var tag = location.href.split('#')[1] //hash or null
+					render(tag)
+				})
+			})
+		})
+		loadjs.ready('core', function() {
+			if (!loadjs.isDefined('dbind-select')) //need this for tsrouter.js
+			{
+				loadjs([
+					'/home/items_d.js'
+				],'dbind-select', {async: false})
+			}
+			else
+				loadjs.done('dbind-select')
+		})
