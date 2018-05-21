@@ -31,7 +31,6 @@ riot.tag2('feed-tag', '<virtual each="{items}"><a href="{url}"> <div class="ui f
     }.bind(this)
 
     this.items = []
-    this.cur = 0
     this.feed =[]
     thiz = this
 
@@ -49,6 +48,7 @@ riot.tag2('feed-tag', '<virtual each="{items}"><a href="{url}"> <div class="ui f
     function add(c) {
 
     	thiz.items.push( thiz.feed.pop())
+
     	thiz.update()
 
     }
