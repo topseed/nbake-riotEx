@@ -1,9 +1,9 @@
-
+script(src='tags/feed-tag.js')
 p
 br
 p
 div
-	#here
+	feed-tag
 
 p
 br
@@ -14,60 +14,12 @@ br
 p
 
 script.
-	if (!loadjs.isDefined('binding')) //need this for tsrouter
-		loadjs('feed_d.js', 'binding', {async: false})
-	else loadjs.done('binding')
+	script.
+		// nbake -t .
+		let tag = riot.mount('feed-tag')[0] // mount the first tag
 
-	loadjs.ready(['feed','binding'], function () {
-		console.log('sz', feed.items.length)
-		addFew(2)// init
-		setTimeout(function(){
-			loadjs.done('firstPg')
-		},1000/60)
-	}) //ready
-
-	loadjs.ready(['style','firstPg'], function () {
-		// setup viewport event
-		const addEl = document.getElementById('add')
-		let observer = new IntersectionObserver(function(e){
-			if(e[0].isIntersecting) {
-				console.log('I can see the end')
-				// addFew(2) // :-)
-			}//fi
-		})// observer event
-		observer.observe(addEl)
-	}) // cssJs
-
-	loadjs.ready('core', function() {
-		$('#add').click(function() {
-			addFew(2)
-		})
-	})//ready
-
-	function addFew(c) {// add N items
-		let $t = $('<div></div>')//detached
-		while(c>0) {
-			$t = _addOne($t )
-			c--
-		}
-		$('#here').append( $t )
-		console.log('done binding')
-	}//*()
-
-	cur = 0
-	function _addOne($t) {
-		let sz = feed.items.length
-		if(--sz < cur ) { // array guard
-			console.log(feed.items.length, cur)
-			console.log('the end')
-			return $t
-		}
-		let item =  $.extend({}, feed.items[cur++] ) // clone due to ts router
-		item.url = '/blog/' + item.url +'/'
-		item.image =  item.url + item.image
-		console.log(item.image)
-
-		var el = feedDBind(item) //bind!
-		$t.append(el)
-		return $t
-	}//()
+		loadjs.ready('site', function() {
+			$('#add').click(function() {
+				tag.addFew(2)
+			})
+		})//ready

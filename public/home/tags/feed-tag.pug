@@ -1,0 +1,68 @@
+
+feed-tag
+	a(href=url)
+		.ui.fluid.blue.card
+			.image
+				img(src=image)
+			.content
+				.header {title}
+				.meta {created}
+				.description
+					| {content_html}
+			.extra.content
+				h5.ui.image.header
+					img.ui.avatar.image( src= {avatar} )
+					.content {author.name}
+						.sub.header {read_minutes} minute read
+	p
+	script.
+		function init() {
+			loadjs.ready(['feed'], function () {
+				console.log('sz', feed.items.length)
+				addFew(2)// init
+				setTimeout(function(){
+					loadjs.done('firstPg')
+				},1000/60)
+			}) //ready
+
+			loadjs.ready(['style','firstPg'], function () {
+				// setup viewport event
+				const addEl = document.getElementById('add')
+				let observer = new IntersectionObserver(function(e){
+					if(e[0].isIntersecting) {
+						console.log('I can see the end')
+						// addFew(2) // :-)
+					}//fi
+				})// observer event
+				observer.observe(addEl)
+			}) // cssJs
+		}
+
+		addFew(c) {// add N items
+			let $t = $('<div></div>')//detached
+			while(c>0) {
+				$t = _addOne($t )
+				c--
+			}
+			$('#here').append( $t )
+			console.log('done binding')
+		}//*()
+
+		cur = 0
+
+		_addOne($t) {
+			let sz = feed.items.length
+			if(--sz < cur ) { // array guard
+				console.log(feed.items.length, cur)
+				console.log('the end')
+				return $t
+			}
+			let item =  $.extend({}, feed.items[cur++] ) // clone due to ts router
+			item.url = '/blog/' + item.url +'/'
+			item.image =  item.url + item.image
+			console.log(item.image)
+
+			var el = feedDBind(item) //bind!
+			$t.append(el)
+			return $t
+		}//()

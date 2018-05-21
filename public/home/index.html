@@ -1,5 +1,5 @@
-<!DOCTYPE html><html><head><script>let _start=Date.now()</script><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"><link rel="shortcut icon" type="image/x-icon" href="/assets/favicon.ico"><!-- firestore--><script src="//cdn.jsdelivr.net/npm/loadjs@3.5.4/dist/loadjs.min.js"></script><script src="//cdn.jsdelivr.net/npm/riot@3.9.5/riot.min.js"></script><!--static binding ex:--><title>Page One Title</title><style>html { opacity: 0.005; }
-</style></head><body><script src="/assets/js/setup.js"></script><!--side--><div class="ui fixed vertical inverted sidebar menu"><a class="active item" href="/page/one"><i class="left icon star"></i>One</a><a class="item" href="/page/two"><i class="left icon book"></i>Two</a></div><!--top--><div class="ui fixed inverted menu"><div class="ui container"><a class="toc item"><i class="sidebar icon"></i></a><div class="item">MySite</div><a class="item" href="/page/one">One</a><a class="item" href="/page/two">Two</a></div><div class="right menu"><a class="item" href="http://github.com/topseed">Git</a></div></div><style>* {
+<!DOCTYPE html><html><head><script>let _start=Date.now()</script><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"><link rel="shortcut icon" type="image/x-icon" href="/assets/favicon.ico"><!-- firestore--><script src="//cdn.jsdelivr.net/npm/loadjs@3.5.4/dist/loadjs.min.js"></script><!--static binding ex:--><title>Page One Title</title><style>html { opacity: 0.005; }
+</style></head><body><script src="/assets/js/setup.js"></script><script src="//cdn.jsdelivr.net/npm/riot@3.10.1/riot.min.js"></script><!--side--><div class="ui fixed vertical inverted sidebar menu"><a class="active item" href="/page/one"><i class="left icon star"></i>One</a><a class="item" href="/page/two"><i class="left icon book"></i>Two</a></div><!--top--><div class="ui fixed inverted menu"><div class="ui container"><a class="toc item"><i class="sidebar icon"></i></a><div class="item">MySite</div><a class="item" href="/page/one">One</a><a class="item" href="/page/two">Two</a></div><div class="right menu"><a class="item" href="http://github.com/topseed">Git</a></div></div><style>* {
 	letter-spacing: .05em !important;
 }
 
@@ -15,7 +15,7 @@
 	.toc.item {
 		display: none !important;
 	}
-}</style><div class="pusher"><script>loadjs.ready(['promise','fetch'], function () {// load data
+}</style><div class="pusher"><script>loadjs.ready(['promise','fetch'], function () {// load data ASAP
 	fetch('/blog/items.json').then(function(resp) {
 		return resp.json()
 	}).then(function(json) {
@@ -23,64 +23,15 @@
 		console.log('ready', Date.now()-_start)
 		loadjs.done('feed')
 	})
-})
-</script><p></p><br><p></p><div class="ui text container"><p></p><br><p></p><div><div id="here"></div></div><p></p><br><p></p><button class="ui button" id="add" type="submit">Add Few</button><p></p><br><p></p><script>if (!loadjs.isDefined('binding')) //need this for tsrouter
-	loadjs('feed_d.js', 'binding', {async: false})
-else loadjs.done('binding')
+})</script><p></p><br><p></p><div class="ui text container"><script src="tags/feed-tag.js"></script><p></p><br><p></p><div><feed-tag></feed-tag></div><p></p><br><p></p><button class="ui button" id="add" type="submit">Add Few</button><p></p><br><p></p><script>script.
+	// nbake -t .
+	let tag = riot.mount('feed-tag')[0] // mount the first tag
 
-loadjs.ready(['feed','binding'], function () {
-	console.log('sz', feed.items.length)
-	addFew(2)// init
-	setTimeout(function(){
-		loadjs.done('firstPg')
-	},1000/60)
-}) //ready
-
-loadjs.ready(['style','firstPg'], function () {
-	// setup viewport event
-	const addEl = document.getElementById('add')
-	let observer = new IntersectionObserver(function(e){
-		if(e[0].isIntersecting) {
-			console.log('I can see the end')
-			// addFew(2) // :-)
-		}//fi
-	})// observer event
-	observer.observe(addEl)
-}) // cssJs
-
-loadjs.ready('core', function() {
-	$('#add').click(function() {
-		addFew(2)
-	})
-})//ready
-
-function addFew(c) {// add N items
-	let $t = $('<div></div>')//detached
-	while(c>0) {
-		$t = _addOne($t )
-		c--
-	}
-	$('#here').append( $t )
-	console.log('done binding')
-}//*()
-
-cur = 0
-function _addOne($t) {
-	let sz = feed.items.length
-	if(--sz < cur ) { // array guard
-		console.log(feed.items.length, cur)
-		console.log('the end')
-		return $t
-	}
-	let item =  $.extend({}, feed.items[cur++] ) // clone due to ts router
-	item.url = '/blog/' + item.url +'/'
-	item.image =  item.url + item.image
-	console.log(item.image)
-
-	var el = feedDBind(item) //bind!
-	$t.append(el)
-	return $t
-}//()</script></div><script>loadjs.ready('style', function () {
+	loadjs.ready('site', function() {
+		$('#add').click(function() {
+			tag.addFew(2)
+		})
+	})//ready</script></div><script>loadjs.ready('style', function () {
 	console.log('page 1 script here')
 })</script></div><script>console.log('layout')
 
