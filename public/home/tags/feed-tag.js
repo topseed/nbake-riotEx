@@ -1,12 +1,12 @@
 
-riot.tag2('feed-tag', '<virtual each="{items}"><a> <div class="ui fluid blue card"> <div class="image"><img></div> <div class="content"> <div class="header">{title}</div> <div class="meta">{created}</div> <div class="description">{content_html}</div> </div> <div class="extra content"> <h5 class="ui image header"><img class="ui avatar image" riot-src="{author.avatar}"> <div class="content">{author.name} <div class="sub header">{read_minutes} minute read</div> </div> </h5> </div> </div></a> <p></p></virtual>', '', '', function(opts) {
+riot.tag2('feed-tag', '<virtual each="{items}"><a href="{url}"> <div class="ui fluid blue card"> <div class="image"><img riot-src="{image}"></div> <div class="content"> <div class="header">{title}</div> <div class="meta">{created}</div> <div class="description">{content_html}</div> </div> <div class="extra content"> <h5 class="ui image header"><img class="ui avatar image" riot-src="{author.avatar}"> <div class="content">{author.name} <div class="sub header">{read_minutes} minute read</div> </div> </h5> </div> </div></a> <p></p></virtual>', '', '', function(opts) {
     init()
     function init() {
     	thiz = this
     	loadjs.ready(['feed'], function () {
     		console.log('sz', feed.items.length)
 
-    		nn()
+    		first()
 
     		setTimeout(function(){
     			loadjs.done('firstPg')
@@ -31,36 +31,25 @@ riot.tag2('feed-tag', '<virtual each="{items}"><a> <div class="ui fluid blue car
     }.bind(this)
 
     this.items = []
+    this.cur = 0
+    this.feed =[]
     thiz = this
-    function nn() {
-    	thiz.items = feed.items
-    	console.log(feed.items)
-    	thiz.update()
+
+    function first() {
+    	thiz.feed = feed.items
+    	for(let item of thiz.feed) {
+    		item.url = '/blog/' + item.url +'/'
+    		item.image =  item.url + item.image
+    		console.log(item.image)
+    	}
+
+    	add(2)
     }
 
     function add(c) {
-    	let $t = $('<div></div>')
-    	while(c>0) {
-    		$t = _addOne($t )
-    		c--
-    	}
-    	$('#here').append( $t )
-    	console.log('done binding')
-    }
 
-    cur = 0
-
-    function _addOne($t) {
-    	let sz = feed.items.length
-    	if(--sz < cur ) {
-    		console.log(feed.items.length, cur)
-    		console.log('the end')
-    		return $t
-    	}
-    	let item =  $.extend({}, feed.items[cur++] )
-    	item.url = '/blog/' + item.url +'/'
-    	item.image =  item.url + item.image
-    	console.log(item.image)
+    	thiz.items.push( thiz.feed.pop())
+    	thiz.update()
 
     }
 });

@@ -3,10 +3,10 @@ feed-tag
 
 	<virtual each={ items}>
 
-		a(href=url)
+		a(href='{url}')
 			.ui.fluid.blue.card
 				.image
-					img(src=image)
+					img(src= '{image}')
 				.content
 					.header {title}
 					.meta {created}
@@ -28,7 +28,7 @@ feed-tag
 			loadjs.ready(['feed'], function () {
 				console.log('sz', feed.items.length)
 
-				nn()
+				first()
 				//add(2)// init
 
 				setTimeout(function(){
@@ -54,35 +54,27 @@ feed-tag
 		}
 
 		this.items = []
+		this.cur = 0
+		this.feed =[]
 		thiz = this
-		function nn() {
-			thiz.items = feed.items
-			console.log(feed.items)
-			thiz.update()
+
+		function first() {
+			thiz.feed = feed.items
+			for(let item of thiz.feed) {
+				item.url = '/blog/' + item.url +'/'
+				item.image =  item.url + item.image
+				console.log(item.image)
+			}
+
+			add(2)
 		}
 
-		function add(c) {// add N items
-			let $t = $('<div></div>')//detached
-			while(c>0) {
-				$t = _addOne($t )
-				c--
-			}
-			$('#here').append( $t )
-			console.log('done binding')
-		}//*()
+		function add(c) {
 
-		cur = 0
+			thiz.items.push( thiz.feed.pop())
+			thiz.update()
 
-		function _addOne($t) {
-			let sz = feed.items.length
-			if(--sz < cur ) { // array guard
-				console.log(feed.items.length, cur)
-				console.log('the end')
-				return $t
-			}
-			let item =  $.extend({}, feed.items[cur++] ) // clone due to ts router
-			item.url = '/blog/' + item.url +'/'
-			item.image =  item.url + item.image
-			console.log(item.image)
+		}
 
-		}//()
+
+
