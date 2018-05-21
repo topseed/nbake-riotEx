@@ -1,6 +1,8 @@
 
 riot.tag2('feed-tag', '<a> <div class="ui fluid blue card"> <div class="image"><img></div> <div class="content"> <div class="header">{title}</div> <div class="meta">{created}</div> <div class="description">{content_html}</div> </div> <div class="extra content"> <h5 class="ui image header"><img class="ui avatar image" riot-src="{}"> <div class="content">{author.name} <div class="sub header">{read_minutes} minute read</div> </div> </h5> </div> </div></a> <p></p>', '', '', function(opts) {
+    init()
     function init() {
+    	thiz = this
     	loadjs.ready(['feed'], function () {
     		console.log('sz', feed.items.length)
     		addFew(2)
@@ -22,7 +24,7 @@ riot.tag2('feed-tag', '<a> <div class="ui fluid blue card"> <div class="image"><
     	})
     }
 
-    this.addFew = function(c) {
+    function addFew(c) {
     	let $t = $('<div></div>')
     	while(c>0) {
     		$t = _addOne($t )
@@ -30,11 +32,11 @@ riot.tag2('feed-tag', '<a> <div class="ui fluid blue card"> <div class="image"><
     	}
     	$('#here').append( $t )
     	console.log('done binding')
-    }.bind(this)
+    }
 
     cur = 0
 
-    this._addOne = function($t) {
+    function _addOne($t) {
     	let sz = feed.items.length
     	if(--sz < cur ) {
     		console.log(feed.items.length, cur)
@@ -46,8 +48,5 @@ riot.tag2('feed-tag', '<a> <div class="ui fluid blue card"> <div class="image"><
     	item.image =  item.url + item.image
     	console.log(item.image)
 
-    	var el = feedDBind(item)
-    	$t.append(el)
-    	return $t
-    }.bind(this)
+    }
 });

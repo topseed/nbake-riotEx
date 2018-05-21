@@ -14,12 +14,12 @@ br
 p
 
 script.
-	script.
-		// nbake -t .
-		let tag = riot.mount('feed-tag')[0] // mount the first tag
+	// nbake -t .
 
-		loadjs.ready('site', function() {
-			$('#add').click(function() {
-				tag.addFew(2)
-			})
-		})//ready
+	let rtag = riot.mount('feed-tag')[0] // mount the first tag
+
+	loadjs.ready('site', function() {
+		$('#add').click(function() {
+			rtag.addFew(2)
+		})
+	})//ready

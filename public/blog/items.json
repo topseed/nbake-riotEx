@@ -1,7 +1,7 @@
 {
   "title": "nbake blog",
   "prefix": "/blog/",
-  "nbVer": "v2.05.01",
+  "nbVer": "v2.05.20",
   "note": "This is statically serveed and visible publicly. Check dbake if you want something different",
   "items": [
     {

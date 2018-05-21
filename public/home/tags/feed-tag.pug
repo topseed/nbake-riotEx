@@ -11,12 +11,14 @@ feed-tag
 					| {content_html}
 			.extra.content
 				h5.ui.image.header
-					img.ui.avatar.image( src= {avatar} )
-					.content {author.name}
+					img.ui.avatar.image( src= { avatar } )
+					.content { author.name }
 						.sub.header {read_minutes} minute read
 	p
 	script.
+		init()
 		function init() {
+			thiz = this
 			loadjs.ready(['feed'], function () {
 				console.log('sz', feed.items.length)
 				addFew(2)// init
@@ -38,7 +40,7 @@ feed-tag
 			}) // cssJs
 		}
 
-		addFew(c) {// add N items
+		function addFew(c) {// add N items
 			let $t = $('<div></div>')//detached
 			while(c>0) {
 				$t = _addOne($t )
@@ -50,7 +52,7 @@ feed-tag
 
 		cur = 0
 
-		_addOne($t) {
+		function _addOne($t) {
 			let sz = feed.items.length
 			if(--sz < cur ) { // array guard
 				console.log(feed.items.length, cur)
@@ -62,7 +64,4 @@ feed-tag
 			item.image =  item.url + item.image
 			console.log(item.image)
 
-			var el = feedDBind(item) //bind!
-			$t.append(el)
-			return $t
 		}//()
