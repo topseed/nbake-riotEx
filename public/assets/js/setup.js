@@ -82,7 +82,6 @@ loadjs.ready(['promise','fetch'], function () {
 })
 loadjs.ready(['core'], function () {
 	loadjs([ '//cdn.jsdelivr.net/npm/semantic-ui@2.3.1/dist/components/sidebar.min.js'
-		,'//cdn.jsdelivr.net/npm/riot@3.10.1/riot.min.js'
 		,'//cdn.jsdelivr.net/npm/intersection-observer@0.5.0/intersection-observer.js'
 	], 'cssJs', {
 		async: false //required due to loadjs bug with bundles

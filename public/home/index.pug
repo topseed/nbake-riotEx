@@ -7,7 +7,7 @@ block head
 
 block main
 	script.
-		loadjs.ready(['promise','fetch'], function () {// load data
+		loadjs.ready(['promise','fetch'], function () {// load data ASAP
 			fetch('/blog/items.json').then(function(resp) {
 				return resp.json()
 			}).then(function(json) {
