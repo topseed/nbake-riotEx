@@ -1,27 +1,36 @@
 
 feed-tag
-	a(href=url)
-		.ui.fluid.blue.card
-			.image
-				img(src=image)
-			.content
-				.header {title}
-				.meta {created}
-				.description
-					| {content_html}
-			.extra.content
-				h5.ui.image.header
-					img.ui.avatar.image( src= { avatar } )
-					.content { author.name }
-						.sub.header {read_minutes} minute read
-	p
+
+	<virtual each={ items}>
+
+		a(href=url)
+			.ui.fluid.blue.card
+				.image
+					img(src=image)
+				.content
+					.header {title}
+					.meta {created}
+					.description
+						| {content_html}
+				.extra.content
+					h5.ui.image.header
+						img.ui.avatar.image( src= '{ author.avatar }' )
+						.content { author.name }
+							.sub.header {read_minutes} minute read
+		p
+	</virtual>
+
 	script.
+
 		init()
 		function init() {
 			thiz = this
 			loadjs.ready(['feed'], function () {
 				console.log('sz', feed.items.length)
-				addFew(2)// init
+
+				nn()
+				//add(2)// init
+
 				setTimeout(function(){
 					loadjs.done('firstPg')
 				},1000/60)
@@ -33,14 +42,26 @@ feed-tag
 				let observer = new IntersectionObserver(function(e){
 					if(e[0].isIntersecting) {
 						console.log('I can see the end')
-						// addFew(2) // :-)
+						// add(2) // :-)
 					}//fi
 				})// observer event
 				observer.observe(addEl)
 			}) // cssJs
 		}
 
-		function addFew(c) {// add N items
+		addFew(c) {// public
+			add(c)
+		}
+
+		this.items = []
+		thiz = this
+		function nn() {
+			thiz.items = feed.items
+			console.log(feed.items)
+			thiz.update()
+		}
+
+		function add(c) {// add N items
 			let $t = $('<div></div>')//detached
 			while(c>0) {
 				$t = _addOne($t )

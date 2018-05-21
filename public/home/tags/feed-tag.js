@@ -1,11 +1,13 @@
 
-riot.tag2('feed-tag', '<a> <div class="ui fluid blue card"> <div class="image"><img></div> <div class="content"> <div class="header">{title}</div> <div class="meta">{created}</div> <div class="description">{content_html}</div> </div> <div class="extra content"> <h5 class="ui image header"><img class="ui avatar image" riot-src="{}"> <div class="content">{author.name} <div class="sub header">{read_minutes} minute read</div> </div> </h5> </div> </div></a> <p></p>', '', '', function(opts) {
+riot.tag2('feed-tag', '<virtual each="{items}"><a> <div class="ui fluid blue card"> <div class="image"><img></div> <div class="content"> <div class="header">{title}</div> <div class="meta">{created}</div> <div class="description">{content_html}</div> </div> <div class="extra content"> <h5 class="ui image header"><img class="ui avatar image" riot-src="{author.avatar}"> <div class="content">{author.name} <div class="sub header">{read_minutes} minute read</div> </div> </h5> </div> </div></a> <p></p></virtual>', '', '', function(opts) {
     init()
     function init() {
     	thiz = this
     	loadjs.ready(['feed'], function () {
     		console.log('sz', feed.items.length)
-    		addFew(2)
+
+    		nn()
+
     		setTimeout(function(){
     			loadjs.done('firstPg')
     		},1000/60)
@@ -24,7 +26,19 @@ riot.tag2('feed-tag', '<a> <div class="ui fluid blue card"> <div class="image"><
     	})
     }
 
-    function addFew(c) {
+    this.addFew = function(c) {
+    	add(c)
+    }.bind(this)
+
+    this.items = []
+    thiz = this
+    function nn() {
+    	thiz.items = feed.items
+    	console.log(feed.items)
+    	thiz.update()
+    }
+
+    function add(c) {
     	let $t = $('<div></div>')
     	while(c>0) {
     		$t = _addOne($t )
