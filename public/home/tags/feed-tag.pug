@@ -54,7 +54,6 @@ feed-tag
 		}
 
 		this.items = []
-		this.cur = 0
 		this.feed =[]
 		thiz = this
 
@@ -71,7 +70,9 @@ feed-tag
 
 		function add(c) {
 
+			// loop c times
 			thiz.items.push( thiz.feed.pop())
+
 			thiz.update()
 
 		}
